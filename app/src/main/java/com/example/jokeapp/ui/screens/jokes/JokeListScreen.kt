@@ -187,7 +187,7 @@ fun JokeList(
 
 /**
  * A composable function that displays a single joke item in a card layout.
- * @param joke The joke to be displayed.
+ * @param joke The joke to be displayed.5
  * @param modifier The modifier to be applied to the composable.
  * @param onClick A callback function that is called when the joke item is clicked.
  */
@@ -301,8 +301,7 @@ fun JokeQueryCardView(
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) { index ->
                     // Handle the selection of blocklist options
-                    // TODO: Update the ViewModel with the selected blocklist option
-                    //viewModel.updateBlocklistSelection(index)
+                    viewModel.updateBlocklistSelection(index)
                 }
             }
             Row(
@@ -334,8 +333,7 @@ fun JokeQueryCardView(
                         selectedIndex = queryState.selectedJokeTypeIndex
                     ) {
                         // Handle the joke type selection
-                        // TODO: Update the ViewModel with the selected joke type
-                        //viewModel.updateJokeType(it)
+                        viewModel.updateJokeType(it)
                     }
                 }
                 Column(
@@ -357,8 +355,7 @@ fun JokeQueryCardView(
                         selectedIndex = queryState.selectedNumberOfJokesIndex
                     ) {
                         // Handle the number of jokes selection
-                        // TODO: Update the ViewModel with the selected number of jokes
-                        //viewModel.updateNumberOfJokes(it)
+                        viewModel.updateNumberOfJokes(it)
                     }
                 }
             }
