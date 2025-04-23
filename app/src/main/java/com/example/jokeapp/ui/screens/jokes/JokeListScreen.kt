@@ -42,9 +42,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jokeapp.JokeAppViewModelProvider
 
 import com.example.jokeapp.R
 import com.example.jokeapp.extensions.substringBeforeNthDelimiter
+import com.example.jokeapp.model.Joke
+import com.example.jokeapp.retrofit.JokeType
 
 import com.example.jokeapp.ui.reusableComponents.ChipGroupReflow
 import com.example.jokeapp.ui.reusableComponents.ErrorMessage
@@ -62,12 +65,23 @@ import com.example.jokeapp.ui.reusableComponents.SingleChoiceSegmentedButton
  */
 @Composable
 fun JokeListScreen(
-    /*TODO: ADD viewModel*/
     modifier: Modifier = Modifier,
+    viewModel: JokeListViewModel = viewModel(factory = JokeAppViewModelProvider.Factory)
 ) {
-    // TODO: Placeholder for the ViewModel initialization and ui state management
+    val selectedJoke by viewModel.selectedJoke.collectAsState()
+    // Show the selected joke dialog when selectedJoke != null
+    selectedJoke?.let { joke ->
+        JokeDialog(
+            joke = joke,
+            onConfirm = { viewModel.clearSelectedJoke() },
+            onDismiss = { viewModel.clearSelectedJoke() }
+        )
+    }
 
-    // TODO: Show the selected joke dialog when selectedJoke != null
+    // Observe the UI state from the ViewModel. We observe the uiState used to change the
+    // UI based on the state of data fetch operation. selectedJoke is used to trigger recomposition
+    // that will show/hide a details dialog
+    val uiState by viewModel.uiState.collectAsState()
 
 
     // The main part of the screen
@@ -78,10 +92,61 @@ fun JokeListScreen(
             viewModel = viewModel,
             onGetJokesClicked = {
                 // respond to the button click
-                // TODO: Placeholder for the button click action
+                viewModel.fetchJokes()
             },
         )
-        // TODO: Respond to uiState changes in the ViewModel
+        // The uiState is of type JokeListUiState, which can be
+        // Initial, Loading, Success, or Error.
+        when (uiState) {
+            is JokeListUiState.Initial -> {
+                // Initial state - show a welcome message
+                InfoMessage(
+                    message = stringResource(R.string.press_button_to_get_jokes),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            is JokeListUiState.Loading -> {
+                // Show loading indicator - after user pressed the button
+                LoadingIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+
+            is JokeListUiState.Success -> {
+                // Show the list of jokes when the response from the API is successful
+                // The jokes are extracted from the uiState after casting it to
+                // the Success subclass.
+                val jokes = (uiState as JokeListUiState.Success).jokes
+                // Display the list or a message if the list is empty
+                if (jokes.isNotEmpty()) {
+                    JokeList(
+                        jokes = jokes,
+                        onJokeClick = { joke ->
+                            // Handle joke click - show the joke details dialog
+                            viewModel.selectJoke(joke)
+                        }
+                    )
+                } else {
+                    InfoMessage(
+                        message = stringResource(R.string.no_jokes_found),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+
+            is JokeListUiState.Error -> {
+                // Handle error state - show error message to the user
+                val errorMessage = (uiState as JokeListUiState.Error).message
+                val errorTitle = stringResource((uiState as JokeListUiState.Error).titleRes)
+                ErrorMessage(
+                    errorTitle = errorTitle,
+                    errorMessage = errorMessage,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
     }
 }
 
@@ -196,13 +261,17 @@ fun JokeListItem(joke: Joke, modifier: Modifier = Modifier, onClick: () -> Unit 
  */
 @Composable
 fun JokeQueryCardView(
-   /*TODO: ADD viewModel*/
+    viewModel: JokeListViewModel,
     onGetJokesClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO: read the options from the viewModel
+    // read the options from the viewModel
+    val blocklistOptions = viewModel.blocklistOptions.map { it -> stringResource(it.displayName) }
+    val jokeTypeOptions = viewModel.jokeTypeOptions.map { it -> stringResource(it.displayName) }
+    val numberOfJokesOptions = viewModel.numberOfJokesOptions.map { it.toString() }
 
-    // TODO: Observe the query state from the ViewModel
+    // Observe the query state from the ViewModel
+    val queryState by viewModel.jokeQueryUiState.collectAsState()
 
     Card(
         modifier = modifier
@@ -227,11 +296,13 @@ fun JokeQueryCardView(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ChipGroupReflow(
-                    /*TODO: provide the options and state*/
+                    blocklistOptions,
+                    queryState.blockListSelection,
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) { index ->
                     // Handle the selection of blocklist options
                     // TODO: Update the ViewModel with the selected blocklist option
+                    //viewModel.updateBlocklistSelection(index)
                 }
             }
             Row(
@@ -259,10 +330,12 @@ fun JokeQueryCardView(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     SingleChoiceSegmentedButton(
-                        /*TODO: provide the options and state*/
+                        options = jokeTypeOptions,
+                        selectedIndex = queryState.selectedJokeTypeIndex
                     ) {
                         // Handle the joke type selection
                         // TODO: Update the ViewModel with the selected joke type
+                        //viewModel.updateJokeType(it)
                     }
                 }
                 Column(
@@ -280,17 +353,18 @@ fun JokeQueryCardView(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     ExposedDropdownMenu(
-                        /*TODO: provide the options and state*/
+                        options = numberOfJokesOptions,
+                        selectedIndex = queryState.selectedNumberOfJokesIndex
                     ) {
                         // Handle the number of jokes selection
-                       // TODO: Update the ViewModel with the selected number of jokes
-
+                        // TODO: Update the ViewModel with the selected number of jokes
+                        //viewModel.updateNumberOfJokes(it)
                     }
                 }
             }
 
             Button(
-                enabled = /*TODO: Provide state*/,
+                enabled = queryState.getJokesButtonEnabled,
                 onClick = {
                     // Handle the button click
                     onGetJokesClicked()
@@ -299,7 +373,6 @@ fun JokeQueryCardView(
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally),
                 shape = MaterialTheme.shapes.medium
-
             ) {
                 Icon(
                     imageVector = Icons.TwoTone.Face,

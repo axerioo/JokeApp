@@ -42,9 +42,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.navigation.compose)
-//    TODO: Retrofit and Moshi dependencies
-
-
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi)
+    ksp(libs.moshi.codegen)
     implementation(libs.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

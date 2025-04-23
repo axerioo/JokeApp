@@ -128,9 +128,9 @@ fun LoadingIndicator(
  */
 @Composable
 fun ErrorMessage(
+    modifier: Modifier = Modifier,
     errorTitle: String = "Error",
-    errorMessage: String,
-    modifier: Modifier = Modifier
+    errorMessage: String
 ) {
     Column(
         modifier = modifier

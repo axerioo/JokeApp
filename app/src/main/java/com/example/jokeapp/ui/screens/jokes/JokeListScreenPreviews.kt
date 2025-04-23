@@ -6,7 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jokeapp.JokeAppViewModelProvider
 import com.example.jokeapp.R
+import com.example.jokeapp.model.Joke
 import com.example.jokeapp.ui.theme.JokeAppTheme
 
 
@@ -15,7 +17,7 @@ import com.example.jokeapp.ui.theme.JokeAppTheme
 fun PreviewQueryCardView() {
     JokeAppTheme {
         JokeQueryCardView(
-           /*TODO: Provide ViewModel*/,
+            viewModel = viewModel(factory = JokeAppViewModelProvider.PreviewFactory),
             onGetJokesClicked = {
 
             },
@@ -68,54 +70,6 @@ fun JokeListPreview() {
 }
 
 
-@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
-@Composable
-fun JokeListScreenInitialPreview() {
-    JokeAppTheme {
-        JokeListScreen(
-            modifier = Modifier.padding(top = 48.dp),
-            /*TODO: Provide ViewModel*/,
-        )
-    }
-}
-
-@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
-@Composable
-fun JokeListScreenSuccessPreview() {
-    /*TODO: setup ViewModel*/
-    JokeAppTheme {
-        JokeListScreen(
-            modifier = Modifier.padding(top = 48.dp),
-            /*TODO: Provide ViewModel*/
-        )
-    }
-}
-
-@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
-@Composable
-fun JokeListScreenErrorPreview() {
-    /*TODO: setup ViewModel*/
-
-    JokeAppTheme {
-        JokeListScreen(
-            modifier = Modifier.padding(top = 48.dp),
-            /*TODO: Provide ViewModel*/
-        )
-    }
-}
-
-@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
-@Composable
-fun JokeListScreenLoadingPreview() {
-    /*TODO: setup ViewModel*/
-
-    JokeAppTheme {
-        JokeListScreen(
-            modifier = Modifier.padding(top = 48.dp),
-            /*TODO: Provide ViewModel*/
-        )
-    }
-}
 
 @Preview
 @Composable
@@ -125,6 +79,70 @@ fun JokeDialogPreview() {
             joke = defaultJoke,
             onConfirm = {},
             onDismiss = {}
+        )
+    }
+}
+
+@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
+@Composable
+fun JokeListScreenInitialPreview() {
+    JokeAppTheme {
+        JokeListScreen(
+            modifier = Modifier.padding(top = 48.dp),
+            viewModel = viewModel(factory = JokeAppViewModelProvider.PreviewFactory)
+        )
+    }
+}
+
+@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
+@Composable
+fun JokeListScreenSuccessPreview() {
+    val viewModel: JokeListViewModel = viewModel(factory = JokeAppViewModelProvider.PreviewFactory)
+    viewModel.setPreviewUiState(
+        JokeListUiState.Success(
+            jokes
+        )
+    )
+
+    JokeAppTheme {
+        JokeListScreen(
+            modifier = Modifier.padding(top = 48.dp),
+            viewModel = viewModel
+        )
+    }
+}
+
+@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
+@Composable
+fun JokeListScreenErrorPreview() {
+    val viewModel: JokeListViewModel = viewModel(factory = JokeAppViewModelProvider.PreviewFactory)
+    viewModel.setPreviewUiState(
+        JokeListUiState.Error(
+            titleRes = R.string.error, message =
+                "An error occurred while fetching jokes."
+        )
+    )
+
+    JokeAppTheme {
+        JokeListScreen(
+            modifier = Modifier.padding(top = 48.dp),
+            viewModel = viewModel
+        )
+    }
+}
+
+@Preview(device = "id:pixel_8", showSystemUi = true, showBackground = true)
+@Composable
+fun JokeListScreenLoadingPreview() {
+    val viewModel: JokeListViewModel = viewModel(factory = JokeAppViewModelProvider.PreviewFactory)
+    viewModel.setPreviewUiState(
+        JokeListUiState.Loading
+    )
+
+    JokeAppTheme {
+        JokeListScreen(
+            modifier = Modifier.padding(top = 48.dp),
+            viewModel = viewModel
         )
     }
 }

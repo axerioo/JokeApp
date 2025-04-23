@@ -5,5 +5,38 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
+/**
+ * Provides Factory to create instance of ViewModel for the entire JokeApp
+ */
+object JokeAppViewModelProvider {
 
-//TODO: Placeholder for the JokeAppViewModelProvider for providing ViewModels
+    val Factory = viewModelFactory {
+        // Initializer for CategorySelectViewModel
+        initializer {
+            CategorySelectViewModel()
+        }
+
+        // Initializer for JokeListViewModel
+        initializer {
+            JokeListViewModel(
+                this.createSavedStateHandle()
+            )
+        }
+    }
+
+    val PreviewFactory = viewModelFactory {
+        // Initializer for CategorySelectViewModel
+        initializer {
+            CategorySelectViewModel()
+        }
+
+        // Initializer for JokeListViewModel
+        initializer {
+            JokeListViewModel(
+                SavedStateHandle(
+                    mapOf("category" to "Programming")
+                )
+            )
+        }
+    }
+}

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jokeapp.JokeAppViewModelProvider
 import com.example.jokeapp.ui.reusableComponents.ErrorMessage
 import com.example.jokeapp.ui.reusableComponents.LoadingIndicator
 
@@ -39,13 +40,58 @@ import com.example.jokeapp.ui.reusableComponents.LoadingIndicator
  */
 @Composable
 fun CategorySelectScreen(
-    /*TODO: ADD viewModel*/
     modifier: Modifier = Modifier,
+    viewModel: CategorySelectViewModel = viewModel(factory = JokeAppViewModelProvider.Factory),
     onCategorySelected: (String) -> Unit
 ) {
+    // Observe the UI state from the ViewModel.
+    // The exposed uiState in the CategorySelectViewModel is a StateFlow,
+    // which is a type of observable state holder.
+    // Any changes to the state will be automatically reflected in the UI.
+    val uiState by viewModel.uiState.collectAsState()
+    // The uiState is of type CategoryScreenUiState, which can be Loading, Success, or Error.
+    // By using the when expression with the sealed interface approach,
+    // we can handle each state accordingly in a readable way.
+    when (uiState) {
+        is CategoryScreenUiState.Loading -> {
+            // Show loading indicator when the state is Loading
+            LoadingIndicator(
+                modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
 
-    // TODO: Placeholder for the ViewModel initialization and ui state management
+        is CategoryScreenUiState.Success -> {
+            // Show the list of categories when the state is Success
+            // The categories are extracted from the uiState after casting it to the Success subclass.
+            val categories = (uiState as CategoryScreenUiState.Success).categories
+            LazyColumn(modifier = modifier) {
+                items(items = categories) { category ->
+                    CategoryItem(
+                        categoryName = category,
+                        onCategoryClick = {
+                            onCategorySelected(category)
+                        }
+                    ) }
 
+            }
+        }
+
+        is CategoryScreenUiState.Error -> {
+            // Handle error state - show error message to the user
+            ErrorMessage(
+                errorTitle = stringResource(
+                    id = (uiState as CategoryScreenUiState.Error).titleRes
+                ),
+                errorMessage = (uiState as CategoryScreenUiState.Error).message,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            )
+
+        }
+    }
 }
 
 /**
