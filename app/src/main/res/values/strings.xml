@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JokeAppCompose</string>
+    <string name="app_name">JokeZ</string>
 
     <string name="category_screen_title">Joke Categories</string>
     <string name="jokes_screen_title">Search jokes</string>

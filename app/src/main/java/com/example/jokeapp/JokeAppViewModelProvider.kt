@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.jokeapp.ui.screens.categories.CategorySelectViewModel
+import com.example.jokeapp.ui.screens.jokes.JokeListViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire JokeApp

@@ -18,6 +18,19 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/** Data class to hold the query parameters
+ * for fetching jokes from the API.
+ * @param category The category of the joke to be fetched.
+ * @param jokeType The type of the joke to be fetched.
+ * @param numberOfJokes The number of jokes to be fetched.
+ * @param blocklist The list of blocklist entries to be used for filtering the jokes.
+ */
+data class JokeQueryParameters(
+    val category: String,
+    val jokeType: JokeType,
+    val numberOfJokes: Int,
+    val blocklist: List<Blocklist> = emptyList())
+
 /**
  * ViewModel class for the JokeListScreen. This class is responsible for fetching
  * the jokes from the API and updating the UI state. The UI have two parts:
