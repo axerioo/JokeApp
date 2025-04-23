@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">JokeAppCompose</string>
+
+    <string name="category_screen_title">Joke Categories</string>
+    <string name="jokes_screen_title">Search jokes</string>
+    <string name="blacklist_label">Blacklist</string>
+    <string name="joke_type_label">Joke type:</string>
+    <string name="number_of_jokes_label">Number of jokes:</string>
+<!--    Block names-->
+    <string name="nsfw_block">nsfw</string>
+    <string name="religious_block">religious</string>
+    <string name="political_block">political</string>
+    <string name="racist_block">racist</string>
+    <string name="sexist_block">sexist</string>
+    <string name="explicit_block">explicit</string>
+<!-- Joke type names-->
+    <string name="single_joke_type">single</string>
+    <string name="twopart_joke_type">twopart</string>
+
+    <string name="get_jokes_txt">Get Jokes</string>
+    <string name="press_button_to_get_jokes">Press button to get jokes!</string>
+    <string name="no_jokes_found">No jokes found</string>
+    <string name="show_all">Show All</string>
+    <string name="joke_error">Joke error</string>
+    <string name="joke_dialog_title_template">%1$s Joke</string>
+    <string name="network_error">Network error</string>
+    <string name="error">Error</string>
+</resources>
